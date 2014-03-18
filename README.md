@@ -5,6 +5,13 @@ Web page [http://pomegranate-pkm.org/archives/41](http://pomegranate-pkm.org/arc
 
 Pomegranate Note Taker is a small note taker and screen capture desktop application that complements Pomegranate PKM web application. It written in Python and its GUI in PyQt4.
 
+![Overview](http://pomegranate-pkm.org/wp-content/uploads/2014/02/pmg-note-taker-overview.jpg)
+
+![Menu](http://pomegranate-pkm.org/wp-content/uploads/2014/02/pmg-note-taker-menu.jpg)
+
+![Screen capture](http://pomegranate-pkm.org/wp-content/uploads/2014/02/pmg-note-taker-capture.jpg)
+
+
 It does three things:
 
 * Saving or appending the text entered in the text area to a plain text file
