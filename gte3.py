@@ -20,12 +20,15 @@ import ctypes
 class Notepad(QtGui.QMainWindow):
 
 	global xcdPath
+	global xcdPath2
 	global scpPath
-	xcdPath = 'd:/mhi/mdd/new/xcd/'
-	scpPath = 'd:/mhi/mdd/new/scp/' + datetime.now().strftime('%y.%m.%d')
+
+	xcdPath = 'x:/xcd/'
+	scpPath = 'x:/scp/' + datetime.now().strftime('%y.%m.%d')
 
 	def __init__(self):
 		super(Notepad, self).__init__()
+		self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 		self.initUI()
 
 	def initUI(self):
@@ -78,7 +81,7 @@ class Notepad(QtGui.QMainWindow):
 
 		self.timer = QTimer(self)
 		self.timer.timeout.connect(self.timeout)
-		self.timer.start(60000000)#600000
+		self.timer.start(600000)
 
 		#if not os.path.exists(path):
 		 #       QMessageBox.critical(self, "Critical",
@@ -88,7 +91,7 @@ class Notepad(QtGui.QMainWindow):
 
 		self.timer2 = QTimer(self)
 		self.timer2.timeout.connect(self.timeout2)
-		self.timer2.start(60000000)#600000
+		self.timer2.start(600000)
 
 
 		self.text.textChanged.connect(self.showEntity)
@@ -102,7 +105,7 @@ class Notepad(QtGui.QMainWindow):
 
 		#self.setCentralWidget(self.text)
 		self.setGeometry(300,300,340,150)
-		self.setWindowTitle('Pomegranate Offline Data Entry v3.3')
+		self.setWindowTitle('PKM Note Taker v3.4')
 		self.setWindowIcon(QtGui.QIcon('favicon.jpg'))
 
 		self.show()
@@ -144,32 +147,35 @@ class Notepad(QtGui.QMainWindow):
 			#QMessageBox.Ok, QMessageBox.Cancel)
 			os.makedirs(xcdPath)
 
-		if (len(entity) == 1):
-			path = xcdPath + entity + '_' + \
-					datetime.now().strftime('%y.%m.%d') + '.txt'
+		# if (len(entity) == 1):
+		# 	path = xcdPath + entity + '_' + \
+		# 			datetime.now().strftime('%y.%m.%d') + '.txt'
+		#
+		# 	f = codecs.open(path, "a", "utf-8")
+		# 	f.write(unicode(filedata) + '\n')
+		# 	f.close()
+		# 	self.text.clear() #['text'] = 'ok'
+		# 	size = os.stat(path)[stat.ST_SIZE]
+		# 	self.label.setText('Written to ' +  path + ' (' + str(size) + ' bytes)')
+		# 	#_%H%M%S only date
+		# else:
+#			if (len(entity) > 1):
 
-			f = codecs.open(path, "a", "utf-8")
-			f.write(unicode(filedata) + '\n')
-			f.close()
-			self.text.clear() #['text'] = 'ok'
-			size = os.stat(path)[stat.ST_SIZE]
-			self.label.setText('Written to ' +  path + ' (' + str(size) + ' bytes)')
-			#_%H%M%S only date
-		else:
-			if (len(entity) > 1):
-				path = xcdPath + entity + '_' + \
-					 datetime.now().strftime('%y.%m.%d_%H-%M-%S') + \
-					 '.txt'
+		path = xcdPath + entity + '_' + \
+			 datetime.now().strftime('%y.%m.%d_%H-%M-%S') + \
+			 '.txt'
 
-			f = codecs.open(path, "w", "utf-8-sig")
-			f.write(unicode(filedata) + '\n')
-			f.close()
-			self.text.clear() #['text'] = 'ok'
-			size = os.stat(path)[stat.ST_SIZE]
-			self.label.setStyleSheet("color: gray;")
-			self.label.setText('Written to ' +  path + ' (' + str(size) + ' bytes)')
-			#time.sleep(2)
-			#self.label.setText('')
+		f = codecs.open(path, "w", "utf-8-sig")
+		f.write(unicode(filedata) + '\n')
+		f.close()
+
+
+		self.text.clear() #['text'] = 'ok'
+		size = os.stat(path)[stat.ST_SIZE]
+		self.label.setStyleSheet("color: gray;")
+		self.label.setText('Written to ' +  path + ' (' + str(size) + ' bytes)')
+		#time.sleep(2)
+		#self.label.setText('')
 
 		xcdCount = str(len(glob.glob1(xcdPath,"*_*.txt")))
 		scpCount = str(len(glob.glob1(scpPath,"*.jpg")))
@@ -183,7 +189,7 @@ class Notepad(QtGui.QMainWindow):
 
 	def timeout(self):
 		# Update the lcd
-		#self.timer.stop()
+		self.timer.stop()
 		self.setFocus(True)
 		self.activateWindow()
 		self.raise_()
@@ -191,7 +197,7 @@ class Notepad(QtGui.QMainWindow):
 
 		self.captureScreen()
 
-		#self.timer.start()
+		self.timer.start()
 
 
 
@@ -200,7 +206,7 @@ class Notepad(QtGui.QMainWindow):
 	def captureScreen (self):
 		text, ok = QInputDialog.getText(self,
 			'Current activity',
-			'What are you doing?')
+			'Current activity')
 
 		if ok:
 			if text:
