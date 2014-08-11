@@ -20,11 +20,11 @@ import ctypes
 class Notepad(QtGui.QMainWindow):
 
 	global xcdPath
-	global xcdPath2
 	global scpPath
 
-	xcdPath = 'x:/xcd/'
-	scpPath = 'x:/scp/' + datetime.now().strftime('%y.%m.%d')
+	xcdPath = './xcd/'
+	scpPath = './scp/' #+ datetime.now().strftime('%y.%m.%d')
+    #scpPath = 'C:/Users/Omega/Desktop/scp/' + datetime.now().strftime('%y.%m.%d')
 
 	def __init__(self):
 		super(Notepad, self).__init__()
@@ -41,18 +41,18 @@ class Notepad(QtGui.QMainWindow):
 
 
 
-		newAction = QtGui.QAction('New', self)
+		newAction = QtGui.QAction('Clear note box', self)
 		newAction.setShortcut('Ctrl+N')
 		newAction.setStatusTip('Clear')
 		newAction.triggered.connect(self.newFile)
 
-		saveAction = QtGui.QAction('Save', self)
+		saveAction = QtGui.QAction('Save note', self)
 		saveAction.setShortcut('Ctrl+S')
-		saveAction.setStatusTip('Save current text')
+		saveAction.setStatusTip('Save note')
 		saveAction.triggered.connect(self.saveFile)
 
 
-		captureAction = QtGui.QAction('Capture', self)
+		captureAction = QtGui.QAction('Capture screen', self)
 		captureAction.setShortcut('Ctrl+R')
 		captureAction.setStatusTip('Save current screen')
 		captureAction.triggered.connect(self.captureScreen)
@@ -70,18 +70,21 @@ class Notepad(QtGui.QMainWindow):
 		fileMenu.addAction(captureAction)
 		fileMenu.addAction(closeAction)
 
-		self.label = QLabel("Enter [type] [your text], then press Ctrl+S...", self)
 
-		self.stat = QLabel("", self)
+
+		self.label = QLabel("Enter your note then press Ctrl+S to save.", self)
+
+		#self.stat = QLabel("", self)
 		xcdCount = str(len(glob.glob1(xcdPath,"*_*.txt")))
 		scpCount = str(len(glob.glob1(scpPath,"*.jpg")))
-		self.stat.setText(xcdCount + ' xcd ' + scpCount + ' scp')
+		#self.stat.setText(xcdCount + ' xcd ' + scpCount + ' scp')
+		self.setWindowTitle('Pomegranate Seeds v3.5 [' + xcdCount + ' xcd ' + scpCount + ' scp]' )
 
 		self.text = QtGui.QTextEdit(self)
 
 		self.timer = QTimer(self)
-		self.timer.timeout.connect(self.timeout)
-		self.timer.start(600000)
+		#self.timer.timeout.connect(self.timeout)
+		#self.timer.start(6000000)
 
 		#if not os.path.exists(path):
 		 #       QMessageBox.critical(self, "Critical",
@@ -90,22 +93,23 @@ class Notepad(QtGui.QMainWindow):
 
 
 		self.timer2 = QTimer(self)
-		self.timer2.timeout.connect(self.timeout2)
-		self.timer2.start(600000)
+		#self.timer2.timeout.connect(self.timeout2)
+		#self.timer2.start(6000000)
 
 
 		self.text.textChanged.connect(self.showEntity)
 
-		self.hbox.addWidget(self.label)
+
 		self.hbox.addWidget(self.text)
-		self.hbox.addWidget(self.stat)
+		self.hbox.addWidget(self.label)
+		#self.hbox.addWidget(self.stat)
 		self.setCentralWidget(self.central)
 
 
 
 		#self.setCentralWidget(self.text)
-		self.setGeometry(300,300,340,150)
-		self.setWindowTitle('PKM Note Taker v3.4')
+		self.setGeometry(800,550,300,120)
+		#self.setWindowTitle('Pomegranate Seeds v3.5')
 		self.setWindowIcon(QtGui.QIcon('favicon.jpg'))
 
 		self.show()
@@ -114,24 +118,29 @@ class Notepad(QtGui.QMainWindow):
 		self.text.clear()
 
 	def getEntity(self):
-		firstLine = self.text.toPlainText().split('\n')[0]
-		entity = 'Enter [type] [text], then press Ctrl+S...'
-		if (firstLine.count(' ') > 0):
-			entity = firstLine.split(' ')[0]
-		else:
-			if (firstLine == ''):
-				entity = 'note'
-			else:
-				entity = firstLine
+
+
+		#firstLine = str(self.text).strip('\n \t')
+		#firstLine = str(self.text.toPlainText())#.strip('\n \t')
+		entity = str(len(unicode(self.text.toPlainText(), 'utf-8'))) #'note'
+		#if (len(firstLine.split(' ')[0]) < 10):
+		#entity = firstLine.split(' ')[0]
+		#else:
+		#	entity = 'note'
+
+		#illegal = '?"/\\*:<>' + '!$^&{}|'
+		#for s in illegal:
+		#	entity = entity.replace(s, '_')
+
 		return entity
 
 	def showEntity(self):
-		if (len(self.getEntity()) >= 1):
-			self.label.setStyleSheet("color: green;")
-			self.label.setText(self.getEntity())
-		else:
-			#self.label.setStyleSheet("color: red;")
-			self.label.setText(self.getEntity())
+#		if (len(self.getEntity()) >= 1):
+#			self.label.setStyleSheet("color: green;")
+		self.label.setText(self.getEntity())
+#		else:
+#			#self.label.setStyleSheet("color: red;")
+#			self.label.setText(self.getEntity())
 
 
 
@@ -140,7 +149,7 @@ class Notepad(QtGui.QMainWindow):
 		filedata = self.text.toPlainText()
   
 
-		entity = str(self.getEntity()).upper()
+		entity = 'note' # str(self.getEntity())#.upper()
 		if not os.path.exists(xcdPath):
 			#QMessageBox.critical(self, "Critical",
 			#'''Directory does not exist''',
@@ -173,13 +182,15 @@ class Notepad(QtGui.QMainWindow):
 		self.text.clear() #['text'] = 'ok'
 		size = os.stat(path)[stat.ST_SIZE]
 		self.label.setStyleSheet("color: gray;")
-		self.label.setText('Written to ' +  path + ' (' + str(size) + ' bytes)')
-		#time.sleep(2)
+		self.label.setText('> ' +  path + ' (' + str(size) + ' bytes)')
+		#time.sleep(4)
+
 		#self.label.setText('')
 
 		xcdCount = str(len(glob.glob1(xcdPath,"*_*.txt")))
 		scpCount = str(len(glob.glob1(scpPath,"*.jpg")))
-		self.stat.setText(xcdCount + ' xcd ' + scpCount + ' scp')
+		#self.stat.setText(xcdCount + ' xcd ' + scpCount + ' scp')
+		self.setWindowTitle('Pomegranate Seeds v3.6 [' + xcdCount + ' xcd ' + scpCount + ' scp]' )
 
 
 	def restartTimer(self):
@@ -217,13 +228,13 @@ class Notepad(QtGui.QMainWindow):
 			#self.le.setText(str(text))
 						#app = QApplication(sys.argv)
 
-			lastCapture =  time.strftime("%Y.%m.%d_%H-%M-%S",
+			lastCapture =  time.strftime("%d.%m.%Y_%H%M",
 											 time.localtime())
 			lastCaptureLcd =  time.strftime("%H:%M",
 											time.localtime())
 
 
-			self.lower()
+			self.showMinimized()
 			time.sleep(1)
 
 			originalText =  copy.copy(text)
@@ -245,15 +256,15 @@ class Notepad(QtGui.QMainWindow):
 				  os.makedirs(xcdPath)
 
 			QPixmap.grabWindow(QApplication.desktop().winId())\
-			.save(path + '/scp-' +
-			lastCapture + ' ' + text + '.jpg',
+			.save(path + '/j (' +
+			lastCapture + ' ;; ' + text + '.jpg',
 			'jpeg', 95)
 
 
 			jpath = xcdPath + '/Jtrk' + '_' + \
 				datetime.now().strftime('%y.%m.%d') + '.txt'
 			jf = codecs.open(jpath, "a", "utf-8")
-			jf.write(unicode(datetime.now().strftime('%y.%m.%d_%H-%M-%S') + ': ' + originalText) + '\n')
+			jf.write(unicode(datetime.now().strftime('"%d.%m.%Y_%H%M') + ': ' + originalText) + '\n')
 			jf.close()
 
 			
@@ -263,10 +274,12 @@ class Notepad(QtGui.QMainWindow):
 
 			xcdCount = str(len(glob.glob1(xcdPath,"*_*.txt")))
 			scpCount = str(len(glob.glob1(scpPath,"*.jpg")))
-			self.stat.setText(xcdCount + ' xcd ' + scpCount + ' scp')
+			#self.stat.setText(xcdCount + ' xcd ' + scpCount + ' scp')
+			#self.setWindowTitle('Pomegranate Seeds v3.5 [' + xcdCount + ' xcd ' + scpCount + ' scp]' )
+			#self.setWindowFlags(QtCore.Qt.WindowStaysOnTopHint)
 
-			self.label.setText('Captured the screen at ' +
-			lastCapture) # + ' doing ' + str(text))
+
+			self.label.setText('> scp ' + lastCapture) # + ' doing ' + str(text))
 			
 			
 			# Create new info object
@@ -277,6 +290,8 @@ class Notepad(QtGui.QMainWindow):
 			info.data['supplemental category'] = ['Screenshot']
 			info.save()
 
+			self.showNormal()
+
 	def timeout2(self):
 		# Update the lcd
 		self.setFocus(True)
@@ -286,15 +301,15 @@ class Notepad(QtGui.QMainWindow):
 
 
 
-	def closeEvent(self, event):
-		quit_msg = "Are you sure you want to exit the program?"
-		reply = QtGui.QMessageBox.question(self, 'Message', \
-						 quit_msg, QtGui.QMessageBox.Yes, \
-						 QtGui.QMessageBox.No)
-		if reply == QtGui.QMessageBox.Yes:
-			event.accept()
-		else:
-			event.ignore()
+	#def closeEvent(self, event):
+		# quit_msg = "Are you sure you want to exit the program?"
+		# reply = QtGui.QMessageBox.question(self, 'Message', \
+		# 				 quit_msg, QtGui.QMessageBox.Yes, \
+		# 				 QtGui.QMessageBox.No)
+		# if reply == QtGui.QMessageBox.Yes:
+		# 	event.accept()
+		# else:
+		# 	event.ignore()
 
 def main():
 	app = QtGui.QApplication(sys.argv)
@@ -305,3 +320,4 @@ def main():
 
 if __name__ == '__main__':
 	main()
+
